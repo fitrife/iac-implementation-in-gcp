@@ -9,7 +9,7 @@ resource "google_compute_network" "vpc_network" {
 resource "google_compute_subnetwork" "network-with-private-secondary-ip-ranges" {
   name          = "fitri-subnetwork"
   ip_cidr_range = "172.16.0.0/16"
-  region        = "australia-southeast2"
+  region        = "northamerica-northeast2"
   network       = google_compute_network.vpc_network.self_link
   depends_on    = [ google_compute_network.vpc_network ]
 }
@@ -17,7 +17,7 @@ resource "google_compute_subnetwork" "network-with-private-secondary-ip-ranges" 
 # VM Program
 resource "google_compute_instance" "program" {
   name             = "fitri-program"
-  zone             = "australia-southeast2-b"
+  zone             = "northamerica-northeast2-b"
   machine_type     = "e2-small"
 
   tags = [ "program" ]
@@ -30,8 +30,8 @@ resource "google_compute_instance" "program" {
   }
 
   network_interface {
-    network = "default"
-    subnetwork = google_compute_subnetwork.network-with-private-secondary-ip-ranges.ip_cidr_range
+    network = google_compute_network.vpc_network.self_link
+    subnetwork = google_compute_subnetwork.network-with-private-secondary-ip-ranges.self_link
     network_ip = "172.16.21.1"
   }
 }
@@ -39,7 +39,7 @@ resource "google_compute_instance" "program" {
 # VM Webserver
 resource "google_compute_instance" "webserver" {
   name             = "fitri-webserver"
-  zone             = "australia-southeast2-c"
+  zone             = "northamerica-northeast2-c"
   machine_type     = "e2-small"
 
   tags = [ "webserver" ]
@@ -52,8 +52,8 @@ resource "google_compute_instance" "webserver" {
   }
 
   network_interface {
-    network = "default"
-    subnetwork = google_compute_subnetwork.network-with-private-secondary-ip-ranges.ip_cidr_range
+    network = google_compute_network.vpc_network.self_link
+    subnetwork = google_compute_subnetwork.network-with-private-secondary-ip-ranges.self_link
     network_ip = "172.16.22.2"
     access_config {
     }
